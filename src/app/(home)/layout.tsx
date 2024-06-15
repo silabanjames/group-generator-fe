@@ -14,7 +14,7 @@ export default function RootLayout({
   return (
       <>
       {/* <Navbar /> */}
-      <NavbarShadcn />
+      {/* <NavbarShadcn /> */}
       <div className={inter.className}>{children}</div>
       </>
   );

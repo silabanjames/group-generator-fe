@@ -15,10 +15,11 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
+import { User } from "@/var/User.enum"
 
 const formSchema = z.object({
-  name: z.string(),
-  departement: z.string()
+  email: z.string().email({ message: "Invalid email" }),
+  role: z.nativeEnum(User, { errorMap: () => ({ message: "Invalid user" }) }),
 })
 
 export default function ProfileForm() {
@@ -26,7 +27,8 @@ export default function ProfileForm() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: "",
+      email: "",  
+      role: User.USER
     },
   })
   // 2. Define a submit handler.
@@ -38,17 +40,17 @@ export default function ProfileForm() {
 
   return (
     <>
-      <h1 className="text-2xl font-bold mb-8">Edit Mentor</h1>
+      <h1 className="text-2xl font-bold mb-8">Add Admin</h1>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           <FormField
             control={form.control}
-            name="name"
+            name="email"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Name</FormLabel>
+                <FormLabel>Email</FormLabel>
                 <FormControl>
-                  <Input placeholder="Name" {...field} />
+                  <Input placeholder="Email" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -57,10 +59,10 @@ export default function ProfileForm() {
 
           <FormField
             control={form.control}
-            name="name"
+            name="role"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Departement</FormLabel>
+                <FormLabel>Password</FormLabel>
                 <FormControl>
                   <Input placeholder="Departement" {...field} />
                 </FormControl>
@@ -71,7 +73,7 @@ export default function ProfileForm() {
 
           <div className="w-full flex flex-row justify-between">
             <Button variant="destructive" type="button">Kembali</Button>
-            <Button type="submit">Edit</Button>
+            <Button type="submit">Simpan</Button>
           </div>
         </form>
       </Form>

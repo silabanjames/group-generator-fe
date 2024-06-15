@@ -5,6 +5,6 @@ export interface Member {
   id: string;
   name: string;
   departement: Department;
-  year: number;
+  year: string;
   mentor?: Mentor;
 }

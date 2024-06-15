@@ -1,8 +1,7 @@
 "use client"
 
 import React, { useState } from 'react'
-// import Sidebar from "@/components/layout/admin/Sidebar"
-import Sidebar from "@/components/layout/admin/sidebar"
+import Sidebar from "@/components/layout/admin/Sidebar"
 import { usePathname } from 'next/navigation'
 
 

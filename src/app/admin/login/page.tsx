@@ -11,8 +11,10 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
+import { loginHelpers } from "@/helpers/helpers"
 
 import { zodResolver } from "@hookform/resolvers/zod"
+import { useRouter } from "next/navigation"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 
@@ -31,8 +33,17 @@ function Login() {
     },
   })
 
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
-    console.log(values)
+  const router = useRouter()
+
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    // console.log(values)
+    try {
+    
+    await loginHelpers(values.email, values.password)
+    router.push("/admin/mentor")
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   return (

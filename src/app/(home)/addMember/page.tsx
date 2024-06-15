@@ -25,26 +25,48 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { Department } from "@/var/Departement.enum"
+import axiosInstance from "@/lib/axios"
+import Swal from "sweetalert2"
+import { useRouter } from "next/navigation"
 
 const formSchema = z.object({
-  username: z.string().min(2, {
-    message: "Username must be at least 2 characters.",
-  }),
+  name: z.string().min(1, {message: "Name is required"}),
+  departement: z.nativeEnum(Department, { errorMap: () => ({ message: "Departement is required" }) }),
+  year: z.string().refine((val) => !Number.isNaN(parseInt(val, 10)), {
+    message: "Expected number, received a string"
+  })
 })
 
-function AddPerson() {
+export default function AddPerson() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      username: "",
+      name: "",
+      // departement: Department.TEKNIK_INFORMATIKA,
+      year: ""
     },
   })
- 
+
+  const router = useRouter()
+
   // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values)
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    await axiosInstance
+      .post("/member", values)
+      .then((res) => {
+        router.push("/")
+        router.refresh();
+        
+        Swal.fire({
+          icon: "success",
+          title: "Member has been updated",
+          showConfirmButton: false,
+          timer: 1500
+        });
+      }).catch((err) => {
+        console.error(err)
+      })
   }
 
   return (
@@ -54,12 +76,12 @@ function AddPerson() {
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 w-2/3 xl:w-1/2">
           <FormField
             control={form.control}
-            name="username"
+            name="name"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Nama</FormLabel>
                 <FormControl>
-                  <Input placeholder="shadcn" {...field} />
+                  <Input placeholder="Nama" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -68,25 +90,26 @@ function AddPerson() {
 
           <FormField
             control={form.control}
-            name="username"
+            name="departement"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Username</FormLabel>
-                <FormControl>
-                  <Select>
-                    <SelectTrigger className="">
-                      <SelectValue placeholder="Departemen asal" />
-                    </SelectTrigger>
+                <FormLabel>Department</FormLabel>
+                  <Select onValueChange={field.onChange}>
+                    <FormControl>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="- Select Department -" />
+                      </SelectTrigger>
+                    </FormControl>
                     <SelectContent>
-                      <SelectItem value="est">Teknik Elektro</SelectItem>
-                      <SelectItem value="cst">Teknik Komputer</SelectItem>
-                      <SelectItem value="mst">Teknik Biomedik</SelectItem>
-                      <SelectItem value="pst">Teknik Informatika</SelectItem>
-                      <SelectItem value="akst">Sistem Informasi</SelectItem>
-                      <SelectItem value="hst">Teknologi Informasi</SelectItem>
+                      {
+                        Object.entries(Department).map(([key, value]) => (
+                          <SelectItem key={key} value={value}>
+                            {value}
+                          </SelectItem>
+                        ))
+                      }
                     </SelectContent>
                   </Select>
-                </FormControl>
                 <FormMessage />
               </FormItem>
             )}
@@ -94,12 +117,12 @@ function AddPerson() {
 
           <FormField
             control={form.control}
-            name="username"
+            name="year"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Tahun</FormLabel>
                 <FormControl>
-                  <Input placeholder="shadcn" {...field} />
+                  <Input placeholder="Tahun" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -112,5 +135,3 @@ function AddPerson() {
     </div>
   )
 }
-
-export default AddPerson

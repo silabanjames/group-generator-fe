@@ -4,13 +4,14 @@ import { ColumnDef } from "@tanstack/react-table"
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
-export type Mentor = {
+export type Member = {
   id: string
   name: string,
   departement: string,
+  year: number
 }
 
-export const columns: ColumnDef<Mentor>[] = [
+export const columns: ColumnDef<Member>[] = [
   {
     accessorKey: "name",
     header: "Name",
@@ -18,5 +19,9 @@ export const columns: ColumnDef<Mentor>[] = [
   {
     accessorKey: "departement",
     header: "Departement",
+  },
+  {
+    accessorKey: "year",
+    header: "Year",
   },
 ]

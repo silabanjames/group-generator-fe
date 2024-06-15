@@ -18,8 +18,12 @@ import {
 } from "@/components/ui/table"
 
 import { Button } from "@/components/ui/button"
-
-interface DataTableProps<TData, TValue> {
+import Link from "next/link"
+import { Member } from "./columns"
+import Swal from "sweetalert2"
+import axiosInstance from "@/lib/axios"
+import { useRouter } from "next/navigation"
+interface DataTableProps<TData extends Member, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
 }
@@ -27,13 +31,45 @@ interface DataTableProps<TData, TValue> {
 export function DataTable<TData, TValue>({
   columns,
   data,
-}: DataTableProps<TData, TValue>) {
+}: DataTableProps<Member, TValue>) {
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
   })
+
+  const router = useRouter()
+
+  const onDeleteButton = (id: string) => {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        axiosInstance
+          .delete(`/member/${id}`)
+          .then(() => {
+          })
+          .catch((error) => {
+            console.log(error)
+          })
+        
+        Swal.fire(
+          'Deleted!',
+          'Your file has been deleted.',
+          'success'
+        ).then(() => {
+          window.location.reload()
+        })
+      }
+    })
+  }
 
   return (
     <div>
@@ -54,6 +90,7 @@ export function DataTable<TData, TValue>({
                     </TableHead>
                   )
                 })}
+                <TableHead>Action</TableHead>
               </TableRow>
             ))}
           </TableHeader>
@@ -69,6 +106,12 @@ export function DataTable<TData, TValue>({
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>
                   ))}
+                  <TableCell>
+                    <Button className="mr-2">
+                      <Link href={`/admin/member/editMember/${data[row.index]!.id}`}>Edit</Link>
+                    </Button>
+                    <Button variant="destructive" onClick={() => onDeleteButton(data[row.index]!.id)}>Delete</Button>
+                  </TableCell>
                 </TableRow>
               ))
             ) : (

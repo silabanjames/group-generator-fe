@@ -18,13 +18,12 @@ import {
 } from "@/components/ui/table"
 
 import { Button } from "@/components/ui/button"
-import Link from "next/link"
-import { Mentor } from "./columns"
-
-import Swal from 'sweetalert2'
+import { Admin } from "./columns"
+import Swal from "sweetalert2"
 import axiosInstance from "@/lib/axios"
+import Link from "next/link"
 
-interface DataTableProps<TData extends Mentor, TValue> {
+interface DataTableProps<TData extends Admin, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
 }
@@ -32,7 +31,7 @@ interface DataTableProps<TData extends Mentor, TValue> {
 export function DataTable<TData, TValue>({
   columns,
   data,
-}: DataTableProps<Mentor, TValue>) {
+}: DataTableProps<Admin, TValue>) {
   const table = useReactTable({
     data,
     columns,
@@ -52,7 +51,7 @@ export function DataTable<TData, TValue>({
     }).then((result) => {
       if (result.isConfirmed) {
         axiosInstance
-          .delete(`/mentor/${id}`)
+          .delete(`/admin/${id}`)
           .then((res) => {
           })
           .catch((err) => {
@@ -61,7 +60,7 @@ export function DataTable<TData, TValue>({
 
         Swal.fire({
           title: "Deleted!",
-          text: "The mentor has been deleted.",
+          text: "User has been deleted.",
           icon: "success"
         }).then(() => {
           window.location.reload()
@@ -106,8 +105,10 @@ export function DataTable<TData, TValue>({
                     </TableCell>
                   ))}
                   <TableCell>
-                    <Button className="mr-2">
-                      <Link href={`/admin/mentor/editMentor/${data[row.index]!.id}`}>Edit</Link>
+                    <Button className="mr-2" >
+                      <Link href={`/admin/admin/editAdmin/${data[row.index]!.id}`}>
+                        Edit
+                      </Link>
                     </Button>
                     <Button variant="destructive" onClick={() => onDeleteButton(data[row.index]!.id)}>Delete</Button>
                   </TableCell>
